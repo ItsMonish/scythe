@@ -15,4 +15,4 @@ def makeConfig() -> None:
     elif PARAM["sneak"] == "aes192" and len(PARAM["key"]) != 48:
         raise Exception("Invalid key for obfuscation method: 192-bit key required")
     elif PARAM["sneak"] == "aes128" and len(PARAM["key"]) != 64:
-        raise Exception("Invalid key for obfuscation method: 128-bit key required")
+        raise Exception("Invalid key for obfuscation method: 256-bit key required")

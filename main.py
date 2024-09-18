@@ -1,5 +1,6 @@
 from config import *
 from modules.configMaker import makeConfig
+from modules.gatherer import Gatherer
 import requests
 import sys
 
@@ -20,4 +21,4 @@ if __name__ == "__main__":
         exit(0)
     update(argline=sys.argv[1:])
     makeConfig()
-    print(METHODS["sneak"]("hello there"))
+    Gatherer()
