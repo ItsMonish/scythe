@@ -20,6 +20,4 @@ if __name__ == "__main__":
         exit(0)
     update(argline=sys.argv[1:])
     makeConfig()
-    e = METHODS["sneak"]("hello there")
-    print(e)
-    
+    print(METHODS["sneak"]("hello there"))

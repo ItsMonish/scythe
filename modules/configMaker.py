@@ -2,17 +2,17 @@ from config import *
 from .sneaks import obfuscation
 
 def makeConfig() -> None:
-    METHODS["sneak"] = getSneak(PARAM["sneak"])
-
-def getSneak(param: str) -> object:
-    match param:
-        case "aes128":
-            return obfuscation.aes128
-        case "aes192":
-            return obfuscation.aes192
-        case "aes256":
-            return obfuscation.aes256
-        case "base64":
-            return obfuscation.base64
-        case _:
-            return obfuscation.nothing
+    if PARAM.get("sneak") != None and obfuscation.SNEAKS.get(PARAM["sneak"]) != None:
+        METHODS["sneak"] = obfuscation.SNEAKS[PARAM["sneak"]] 
+    else:
+        METHODS["sneak"] = obfuscation.SNEAKS["nothing"]
+        return
+    if PARAM["sneak"] in ["aes128", "aes192", "aes256"] and PARAM.get("key") == None:
+        PARAM["key"] = ""
+        return
+    if PARAM["sneak"] == "aes128" and len(PARAM["key"]) != 32:
+        raise Exception("Invalid key for obfuscation method: 128-bit key required")
+    elif PARAM["sneak"] == "aes192" and len(PARAM["key"]) != 48:
+        raise Exception("Invalid key for obfuscation method: 192-bit key required")
+    elif PARAM["sneak"] == "aes128" and len(PARAM["key"]) != 64:
+        raise Exception("Invalid key for obfuscation method: 128-bit key required")
