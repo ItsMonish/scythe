@@ -22,6 +22,8 @@ def update(argline: list) -> None:
             case "repo":
                 PARAM["repo"] = argline[i+1]
                 i += 1
+            case "keylogger":
+                PARAM["keylogger"] = ""
             case _:
                 continue
     if(PARAM.get("repo") == None):

