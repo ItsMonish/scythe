@@ -20,7 +20,6 @@ class AESModule:
             return (
                 self.key.hex() + object.nonce.hex() + object.encrypt(con.encode()).hex()
             )
-        print("here")
         return object.encrypt(con.encode()).hex()
 
     def decrypt(self, con: str) -> str:
