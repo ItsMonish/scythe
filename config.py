@@ -1,7 +1,10 @@
 from typing import Callable, Dict, Any
+from threading import Event
 
 PARAM: dict[str, str] = dict()
 METHODS: Dict[str, Callable[..., Any]] = dict()
+RUNNING = Event()
+RUNNING.set()
 
 def update(argline: list) -> None:
     for i in range(0, len(argline)):

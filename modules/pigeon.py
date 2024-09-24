@@ -1,7 +1,7 @@
-from config import PARAM, METHODS
+from config import PARAM, METHODS, RUNNING
 from github import Github, Repository
 from key import GIT_API_KEY
-from threading import Lock, Event
+from threading import Lock
 from time import sleep, strftime
 
 
@@ -11,7 +11,6 @@ class Pigeon:
     __interval: int = 300
     __repo: Repository.Repository 
     __uid: str = ""
-    __service = Event()
 
     @staticmethod
     def pushToBuffer(src: str, con: str) -> None:
@@ -26,14 +25,13 @@ class Pigeon:
 
     @staticmethod
     def startService() -> None:
-        Pigeon.__service.set()
-        while Pigeon.__service.is_set():
+        while RUNNING.is_set():
             sleep(Pigeon.__interval)
             Pigeon.__deliverContents()
 
     @staticmethod
     def stopService() -> None:
-        Pigeon.__service.clear()
+        RUNNING.clear()
 
     @staticmethod
     def initComs(uid: str, info: str) -> None:
