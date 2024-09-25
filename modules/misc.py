@@ -5,6 +5,7 @@ from .pigeon import Pigeon
 from pyperclip import paste # type: ignore
 from time import sleep
 
+
 def grabSS(delay: int = 0) -> str:
     sleep(delay)
     img = ImageGrab.grab()
