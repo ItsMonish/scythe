@@ -7,8 +7,14 @@ import requests
 import sys
 from threading import Thread
 
+
 def isCxnActive() -> bool:
-    urls = ["https://github.com", "https://google.com", "https://duckduckgo.com", "https://bing.com"]
+    urls = [
+        "https://github.com",
+        "https://google.com",
+        "https://duckduckgo.com",
+        "https://bing.com",
+    ]
     for url in urls:
         try:
             stat = requests.head(url, timeout=5).status_code
@@ -20,7 +26,7 @@ def isCxnActive() -> bool:
 
 
 if __name__ == "__main__":
-    if(not isCxnActive()):
+    if not isCxnActive():
         exit(0)
     update(argline=sys.argv[1:])
     makeConfig()

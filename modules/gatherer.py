@@ -4,6 +4,7 @@ import platform
 from requests import ConnectionError, get
 import socket
 
+
 def getPubIP() -> str:
     ip = ""
     try:
@@ -13,15 +14,18 @@ def getPubIP() -> str:
         ip += "error retrieving"
     return ip
 
+
 class Gatherer:
     def __init__(self) -> None:
         self.info: str = ""
         self.uid: str = os.urandom(24).hex()
-        self.info += "UUID: {}".format(self.uid) 
+        self.info += "UUID: {}".format(self.uid)
         self.info += " | Hostname: {}".format(socket.gethostname())
         self.info += " | PrivIP: {}".format(socket.gethostbyname(socket.gethostname()))
         self.info += " | PubIP: {}".format(getPubIP())
-        self.info += " | OS: {} {} {}".format(platform.system(),platform.version(),platform.release())
+        self.info += " | OS: {} {} {}".format(
+            platform.system(), platform.version(), platform.release()
+        )
         self.info += " | Processor: {}".format(platform.processor())
         self.info += " | Arch: {}".format(platform.machine())
         self.info += " | Envs: {}".format(os.environ)

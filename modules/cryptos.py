@@ -1,6 +1,7 @@
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES
 
+
 class AESModule:
     def __init__(self, keySize: int = 128, key: str = "") -> None:
         if keySize not in [128, 192, 256]:
