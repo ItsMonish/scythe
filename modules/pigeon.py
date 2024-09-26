@@ -96,7 +96,7 @@ class Pigeon:
                     continue
                 if type(params) == list:
                     result = METHODS[cmd](*params)
-                if len(result) != 0:
+                if result is not None and len(result) != 0:
                     Pigeon.__repo.create_file(
                         "{}/00_results/{}_{}".format(Pigeon.__uid, cmd, message),
                         "Executioner push",
