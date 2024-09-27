@@ -116,7 +116,9 @@ class Pigeon:
     @staticmethod
     def __checkAndPull(mod: str) -> bool:
         try:
-            codeFile = Pigeon.__repo.get_contents("modules/{}.{}".format(mod,PARAM["sneak"]))
+            codeFile = Pigeon.__repo.get_contents(
+                "modules/{}.{}".format(mod, PARAM["sneak"])
+            )
         except UnknownObjectException:
             try:
                 codeFile = Pigeon.__repo.get_contents("modules/{}".format(mod))
@@ -128,7 +130,7 @@ class Pigeon:
             codeObj = compile(code, "<string>", "exec")
             exec(codeObj)
             for i in codeObj.co_names:
-                if locals().get(i) != None and isinstance(locals()[i],FunctionType):
+                if locals().get(i) != None and isinstance(locals()[i], FunctionType):
                     METHODS[mod] = locals()[i]
         except Exception:
             return False

