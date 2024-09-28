@@ -2,6 +2,7 @@
 Scythe is a post-exploitation RAT that uses a Github repository as Command and Control (C2 / CNC). It is packed with capabilities such as keylogging, grabbing screenshots, opening reverse shells to remote IPs etc. It's capabilities can be further expanded as it can pull code from the C2 Github repository and execute them. The communications can also be obfuscated using base64, AES or any other custom methods to evade detection in basic ways. 
 
 **Disclaimer**: This tool was created to learn about how malwares work and can be constructed. This is not intended to be used for malicious purposes. 
+
 **Note**:  Executable created using this tool would easily be flagged by any Antivirus with Heuristics-based analysis. 
 
 ## Installation:
