@@ -4,6 +4,8 @@ Scythe is a post-exploitation RAT that uses a Github repository as Command and C
 **Disclaimer**: This tool was created to learn about how malwares work and can be constructed. This is not intended to be used for malicious purposes. 
 
 **Note**:  Executable created using this tool would easily be flagged by any Antivirus with Heuristics-based analysis. 
+**Edit**: A sample of the generated payload was uploaded to [VirusTotal](https://www.virustotal.com/gui/file/c85b4f58b57838c68a0c0449bb216ebcf01d478daca0d8d9a036eff74d97a972). At the time only 2 vendors flagged the payload, but now it is flagged by 27 different vendors.
+![virustotal image](assets/virustotal_result.png)
 
 ## Installation:
 - `setup.sh` and `setup.ps1`will check for Python and pip installations, install dependencies required from `requirements.txt` and will prompt for a Github Personal Access Token that will be used to access the repository intended to use as C2.
